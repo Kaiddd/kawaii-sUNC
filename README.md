@@ -15,4 +15,4 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/Kaiddd/kawaii-sUNC/ma
 - `src/runtime.lua` contains startup code and required host functions.
 - `src/metadata.lua` supplies data used by the tests.
 
-Verified in Kawaii: 83/86 with `checkcaller` passing, including a completed result screen. The three expected failures are `getscriptbytecode`, `decompile`, and the dependent basic `loadstring` check.
+Verified in Kawaii: 83/86, including a completed result screen. The three expected failures are `getscriptbytecode`, `decompile`, and the dependent basic `loadstring` check.
