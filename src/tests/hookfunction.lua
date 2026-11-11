@@ -385,14 +385,15 @@ return function()
 	end
 	originalNamecall[1] =
 		environment.hookfunction(environment.getrawmetatable(environment.game).__namecall, namecallHook)
-	local detectionAttemptsLeft = 28
+	-- The place's detector fingerprints __namecall every frame and flags a change within a
+	-- frame or two, so watch every frame for 1 second (was 28 checks 0.1 s apart, 2.8 s).
+	local detectionDeadline = environment.os.clock() + 1
 	repeat
-		environment.task.wait(0.1)
-		detectionAttemptsLeft -= 1
+		environment.task.wait()
 		-- Plain index + call rather than a method call: __namecall is hooked at this point.
 		local flagHolder = environment.game.ReplicatedStorage.TestFuncs.awuuu
 		local detected = flagHolder.GetAttribute(flagHolder, "cwazybwo")
-	until detected or detectionAttemptsLeft <= 0
+	until detected or environment.os.clock() >= detectionDeadline
 	environment.hookfunction(environment.getrawmetatable(environment.game).__namecall, originalNamecall[1])
 	if environment.game.ReplicatedStorage.TestFuncs.awuuu:GetAttribute("cwazybwo") then
 		reportFailure("generic namecall hook detected")

@@ -93,14 +93,15 @@ return function()
 		end
 	end
 
-	-- The host closure stores cloneref(workspace.Somethingiok) into cloneHolder[1]
+	-- The host closure stores cloneref(workspace.Somethingiok) into cloneHolder[1]. The place
+	-- flags a cloneref that keeps the original reference alive (a garbage-collection check):
+	-- measured detection took 0.4-1.6 seconds, so watch for 3 seconds (was 300 frames, ~5 s).
 	local cloneHolder = {}
 	hostFactories[1]({ cloneHolder })()
-	local remaining = 300
+	local detectionDeadline = environment.os.clock() + 3
 	repeat
 		environment.task.wait()
-		remaining -= 1
-	until environment.workspace.tsatsatsatsa.Massless == true or remaining <= 0
+	until environment.workspace.tsatsatsatsa.Massless == true or environment.os.clock() >= detectionDeadline
 	if environment.workspace.tsatsatsatsa.Massless == true then
 		reportResult(false, "cloneref", "Failed to use cloneref without being detected")
 		if failureMap.cloneref then

@@ -1,10 +1,10 @@
 local reportResult, environment = ...
 
 return function()
-	local success, response = environment.pcall(
-		environment.request,
-		{ Url = "https://api.rubis.app/v2/scrap/eupJy408XkzQdshz/raw", Method = "GET" }
-	)
+	local success, response = environment.pcall(environment.request, {
+		Url = "https://raw.githubusercontent.com/Kaiddd/kawaii-sUNC/main/src/test-dependencies/request-probe.json",
+		Method = "GET",
+	})
 	if not success then
 		reportResult(false, "request", "Encountered an error trying to make a request: " .. response)
 	end

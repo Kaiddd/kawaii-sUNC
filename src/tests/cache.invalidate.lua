@@ -39,7 +39,6 @@ return function()
 	invalidatedPart.Name = invalidatedName
 	environment.cache.invalidate(invalidatedPart)
 	local foundInvalidated = registryContainsInstanceNamed(invalidatedName)
-	environment.task.wait(1)
 	if foundInvalidated then
 		fail("Was able to find the cached instance in registry")
 	end

@@ -448,7 +448,7 @@ local function main()
 			return environment.table.freeze(merged)
 		end
 		warningLogger(
-			"Couldn't find the debug table, so it was set to default. To get the full script, join our Discord server: [discord.gg/yGNzDrvbF5] :)"
+			"Couldn't find the debug table, so it was set to default. To get the full script, join our Discord server: [discord.gg/kawaiilua] :)"
 		)
 		local genv = environment.getgenv()
 		genv.sUNCDebug = environment.table.clone(defaultOptions)

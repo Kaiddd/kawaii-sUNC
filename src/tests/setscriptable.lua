@@ -12,15 +12,20 @@ return function()
 	end
 	environment.xpcall(readSiz, logError)
 
+	-- Poll every frame for up to 6.25 seconds (the original polled every 0.25 seconds, 25 times).
 	local scriptablePart = environment.Instance.new("Part")
-	local attemptsLeft = 25
+	local deadline = environment.os.clock() + 6.25
 	environment.setscriptable(scriptablePart, "formFactorRaw", true)
-	repeat
-		environment.task.wait(0.25)
-		attemptsLeft -= 1
-	until environment.isscriptable(scriptablePart, "formFactorRaw") or attemptsLeft <= 0
+	local timedOut = false
+	while not environment.isscriptable(scriptablePart, "formFactorRaw") do
+		if environment.os.clock() >= deadline then
+			timedOut = true
+			break
+		end
+		environment.task.wait()
+	end
 
-	if attemptsLeft <= 0 then
+	if timedOut then
 		reportResult(false, "setscriptable", "Couldn't determine whether the property was set scriptable (Timed out)")
 	end
 

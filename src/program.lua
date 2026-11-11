@@ -1084,7 +1084,7 @@ return function(_)
 		local letEmIn = environment.game.ReplicatedStorage["Let em in"]
 		if "Swerve, bend that corner woahhh" ~= letEmIn:InvokeServer("2ga0BtoGsgbaBrQG", nil, identityBuffer, nil) then
 			warningLogger(
-				"Failed to authenticate. This usually means that your exploit doesn't support sUNC. If you have any questions regarding this, let us know [discord.gg/yGNzDrvbF5]"
+				"Failed to authenticate. This usually means that your exploit doesn't support sUNC. If you have any questions regarding this, let us know [discord.gg/kawaiilua]"
 			)
 			environment.getgenv()["000PPP000"] = false
 			environment.getgenv()["000PPP000"] = nil
@@ -1469,7 +1469,7 @@ return function(_)
 		checkpointLogger(
 			"STARTING sUNC test. Join our Discord server if you want :"
 				.. environment.utf8.char(8204)
-				.. ") [discord.gg/yGNzDrvbF5]"
+				.. ") [discord.gg/kawaiilua]"
 		)
 		environment.task.wait(0.001)
 
@@ -2881,8 +2881,7 @@ return function(_)
 		waitBetweenTests()
 
 		--------------------------------------------------------------------------------------
-		-- decompile: decompiles AtomicBinding, reloads it and reads a value back (in a coroutine,
-		-- polled for up to 3.5 seconds)
+		-- decompile: decompiles AtomicBinding, reloads it and reads a value back (in a coroutine)
 		--------------------------------------------------------------------------------------
 		timer = Timer:Start()
 		local decompileDone = false
@@ -2925,11 +2924,11 @@ return function(_)
 			decompileError = pcallError
 			decompileOk = pcallOk
 		end)()
-		local remainingPolls = 35
+		-- Poll every frame for up to 3.5 seconds (was 35 checks 0.1 s apart).
+		local decompileDeadline = environment.os.clock() + 3.5
 		repeat
-			environment.task.wait(0.1)
-			remainingPolls -= 1
-		until remainingPolls <= 0 or decompileDone == true or not environment.decompile
+			environment.task.wait()
+		until environment.os.clock() >= decompileDeadline or decompileDone == true or not environment.decompile
 		if decompileOk == false then
 			reportFlaggedError("decompile", decompileError)
 		end
@@ -2957,7 +2956,6 @@ return function(_)
 			environment.loadstring(
 				'\r\n\t\tlocal a = Instance.new("Part", workspace)\r\n\t\ta.Name = "undetected"\r\n\t\ta.Anchored = true\r\n\t\ta.CFrame = CFrame.new(0, -200, 0)\r\n\t'
 			)()
-			environment.task.wait(0.15)
 			if environment.workspace:FindFirstChild("undetected") then
 				environment.workspace:FindFirstChild("undetected"):Destroy()
 			else
@@ -3431,13 +3429,14 @@ return function(_)
 		environment.table.foreach(missingFunctionWarnings, warningLogger)
 		checkpointLogger("\n\n\n")
 		for _, entry in environment.pairs(summary) do
-			environment.task.wait()
 			if entry.passed then
 				checkpointLogger(environment.utf8.char(9989) .. " " .. entry.test)
 			else
 				checkpointLogger(environment.utf8.char(10060) .. " " .. entry.test)
 			end
 		end
+		-- One yield (instead of one per line) lets the console hooks receive the summary lines.
+		environment.task.wait()
 		local totalCount = 0
 		for _ in environment.pairs(summary) do
 			totalCount += 1
@@ -4145,9 +4144,9 @@ return function(_)
 		environment.truncateToOneDecimal = floorToHundredths
 		checkpointLogger("Finished the test in " .. environment.truncateToOneDecimal(elapsedSeconds) .. " seconds")
 		checkpointLogger("\n")
-		checkpointLogger("sUNC, VERSION 2.1.5 " .. versionTag)
+		checkpointLogger("Kawaii-sUNC, VERSION 2.1.5 " .. versionTag)
 		if environment.game:GetService("RunService"):IsStudio() then
-			checkpointLogger("Contributors: vvultt, GRH, 0_void, Dottik, citam.")
+			checkpointLogger("Contributors: Kaede, vvultt, GRH, 0_void, Dottik, citam.")
 			environment.getgenv()["000PPP000"] = false
 			environment.getgenv()["000PPP000"] = nil
 			environment.getgenv()["000PPP000"] = false
@@ -4157,7 +4156,7 @@ return function(_)
 		checkpointLogger(
 			"Contribu"
 				.. environment.utf8.char(8204)
-				.. "tors: Richy, Lovre, vvultt, GRH,"
+				.. "tors: Kaede, Richy, Lovre, vvultt, GRH,"
 				.. environment.utf8.char(8204)
 				.. " 0_void, Dottik, Pixeluted, citam."
 		)
@@ -4170,7 +4169,7 @@ return function(_)
 	end
 	-- Not in the dedicated place: teleport there.
 	warningLogger(
-		"[1] - Please execute sUNC in the dedicated place. You can find it on our Discord server [discord.gg/yGNzDrvbF5]"
+		"[1] - Please execute sUNC in the dedicated place. You can find it on our Discord server [discord.gg/kawaiilua]"
 	)
 	if options.printcheckpoints then
 		warningLogger('just make it warn("diofdjaosijdsfajia"). Credits: ETq')
