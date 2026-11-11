@@ -15,3 +15,5 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/Kaiddd/kawaii-sUNC/ma
 - `src/runtime.lua` contains the startup and integrity checks and launches the program.
 - `src/metadata.lua` holds the shared table the modules are registered on.
 - `src/test-dependencies/` contains the files the tests download, so no external Lua is loaded.
+
+Verified in Kawaii: 83/86, including a completed result screen. The three expected failures are `getscriptbytecode`, `decompile`, and the dependent basic `loadstring` check.
