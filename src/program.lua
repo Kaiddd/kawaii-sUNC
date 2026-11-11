@@ -19,10 +19,10 @@
 
 -- Context passed by runtime.lua (keep the order). Besides the obvious ones:
 --   integrityMarkers  the runtime's default sUNCDebug options table; some tests store markers in it
---   protectedCall     the runtime's pcall
+--   _protectedCall    the runtime's pcall; unused (the original misused it as a JSON decoder)
 --   _branchState      unused (the original kept interpreter branch state in it)
 --   packResults, unpackResults, metadata, hostFactories  handed on to the tests
-local warningLogger, checkpointLogger, options, integrityMarkers, protectedCall, _branchState, packResults, unpackResults, metadata, hostFactories, environment, selectArguments =
+local warningLogger, checkpointLogger, options, integrityMarkers, _protectedCall, _branchState, packResults, unpackResults, metadata, hostFactories, environment, selectArguments =
 	...
 
 ------------------------------------------------------------------------------------------------
@@ -3700,9 +3700,12 @@ return function(_)
 
 		local clientInfo = {}
 		environment.pcall(function(_)
-			-- protectedCall is the runtime's pcall (the original calls it with the response body).
-			local response =
-				protectedCall(environment.request({ Url = "https://script.sunc.su/sunc.lua/", Method = "GET" }).Body)
+			-- The endpoint echoes the request headers back as JSON ("unbob"). Fixed: the original
+			-- passed the body to pcall instead of decoding it, so this block always errored and the
+			-- results never carried the executor's User-Agent or fingerprint header.
+			local response = environment.game:GetService("HttpService"):JSONDecode(
+				environment.request({ Url = "https://script.sunc.su/sunc.lua/", Method = "GET" }).Body
+			)
 			local function findUserAgent(_)
 				for key, value in environment.pairs(response.unbob) do
 					if key:lower() == "user-agent" or key:lower() == "useragent" then
