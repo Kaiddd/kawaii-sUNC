@@ -3749,14 +3749,21 @@ return function(_)
 		store:write(7, failureDetails)
 		local resultPacket = store:serialize()
 		warningLogger("yay")
-		local serverAnswer = environment.game.ReplicatedStorage.poooop:InvokeServer(
-			"\255\t\rFinished\2\251",
-			nil,
-			environment.buffer.create(1),
-			2,
-			nil,
-			resultPacket
-		)
+		-- The place's result handler can error (e.g. it crashes on an empty failure list when
+		-- every test passes). That must not abort the run before the summary is printed.
+		local submitted, serverAnswer = environment.pcall(function()
+			return environment.game.ReplicatedStorage.poooop:InvokeServer(
+				"\255\t\rFinished\2\251",
+				nil,
+				environment.buffer.create(1),
+				2,
+				nil,
+				resultPacket
+			)
+		end)
+		if not submitted then
+			warningLogger("Couldn't submit the results, so there is no result link:", serverAnswer)
+		end
 		if serverAnswer == "Failed" then
 			environment.task.wait(0.15)
 			environment.workspace.FreakyBox.d["Right Leg"].Foot.CFrame = environment.CFrame.new(
@@ -3780,14 +3787,15 @@ return function(_)
 
 		--------------------------------------------------------------------------------------
 		-- "Melon": the server answers through the horns' CollisionGroup (the encoded result
-		-- link) or by creating ReplicatedStorage.Scurry.Skys (failure).
+		-- link) or by creating ReplicatedStorage.Scurry.Skys (failure). Without a submission
+		-- there is no answer to wait for (and without printcheckpoints the wait never times out).
 		--------------------------------------------------------------------------------------
-		local melonFailed = false
+		local melonFailed = not submitted
 		local horns = environment.workspace.FreakyBox.f["White Kemono Dragon Horns"].Handle
 		local framesWaited = 0
 		local waitingNotices = 0
 		local printWaitingNotices = options.printcheckpoints
-		repeat
+		while submitted do
 			environment.task.wait()
 			framesWaited += 1
 			local notify = framesWaited % 45 == 0
@@ -3805,7 +3813,10 @@ return function(_)
 			if not answered then
 				answered = waitingNotices >= 8
 			end
-		until answered
+			if answered then
+				break
+			end
+		end
 		if horns.CollisionGroup == "Default" and waitingNotices >= 8 then
 			melonFailed = true
 			local melonRequest = environment.buffer.create(404)
