@@ -5,6 +5,11 @@ Devirtualized sUNC, organized into working source and API tests.
 Join the [sUNC test place](https://www.roblox.com/games/90441122676618/roblox-be-like-yo-ima-need-your-face-and-stuff), then execute:
 
 ```lua
+getgenv().sUNCDebug = {
+    ["printcheckpoints"] = false,
+    ["delaybetweentests"] = 0,
+    ["printtesttimetaken"] = false,
+}
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Kaiddd/kawaii-sUNC/main/main.lua"))()
 ```
 
