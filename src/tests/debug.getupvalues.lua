@@ -1,27 +1,19 @@
-local reportResult, captured2, failureFlag, environment
-reportResult, captured2, failureFlag, environment = ...
-return function(argument)
-  local length
-  if not environment.getsenv then
-    reportResult(false, "debug.getupvalues", "getsenv is needed in order to test")
-    if captured2["debug.getupvalues"] then
-      failureFlag[1] = true
-    end
-  end
-  local onFreeFall2 = environment.getsenv(environment.game.Players.LocalPlayer.Character.Animate).onFreeFall
-  length = #environment.debug.getupvalues(onFreeFall2)
-  if length == 3 then
-    length = false
-  else
-    length = true
-  end
-  if not length then
-    return
-  end
-  reportResult(false, "debug.getupvalues", "Invalid upvalue count")
-  if not captured2["debug.getupvalues"] then
-    return
-  end
-  failureFlag[1] = true
-  return
+local reportResult, failureMap, failureFlag, environment = ...
+
+local function fail(message)
+	reportResult(false, "debug.getupvalues", message)
+	if failureMap["debug.getupvalues"] then
+		failureFlag[1] = true
+	end
+end
+
+return function()
+	if not environment.getsenv then
+		fail("getsenv is needed in order to test")
+	end
+
+	local onFreeFall = environment.getsenv(environment.game.Players.LocalPlayer.Character.Animate).onFreeFall
+	if #environment.debug.getupvalues(onFreeFall) ~= 3 then
+		fail("Invalid upvalue count")
+	end
 end
