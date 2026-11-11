@@ -21,4 +21,4 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/Kaiddd/kawaii-sUNC/ma
 - `src/metadata.lua` holds the shared table the modules are registered on.
 - `src/test-dependencies/` contains the files the tests download, so no external Lua is loaded.
 
-Verified in Kawaii: 86/86 with a result link, in about 15 seconds of testing (about 22 seconds from execution to the final summary).
+Verified in Kawaii: 86/86 with a result link, in about 15 seconds of testing (about 20 seconds from execution to the final summary).
